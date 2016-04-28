@@ -38,7 +38,8 @@ public class SignShopGuardianListener implements Listener {
 
             SavedInventory inv = new SavedInventory(player.getInventory().getContents(), player.getInventory().getArmorContents());
             savedStacks.put(event.getEntity().getName(), inv);
-            if(GuardianUtil.getPlayerGuardianCount(ssPlayer) > 0) {
+            Boolean isVIP = player.hasPermission("signshop.guardians.vip");
+            if(GuardianUtil.getPlayerGuardianCount(ssPlayer) > 0 || isVIP) {
                 if(hasKeepInventory) {
                     // New event method since 1.7.10, let Bukkit do the hard work
                     event.setKeepInventory(true);
@@ -64,12 +65,20 @@ public class SignShopGuardianListener implements Listener {
         SignShopPlayer ssPlayer = new SignShopPlayer(event.getPlayer());
 
         if(savedStacks.containsKey(ssPlayer.getName())) {
-            if(GuardianUtil.getPlayerGuardianCount(ssPlayer) > 0) {
-                Integer guardiansLeft = GuardianUtil.incrementPlayerGuardianCounter(ssPlayer, -1);
+            Boolean isVIP = player.hasPermission("signshop.guardians.vip");
+            if(GuardianUtil.getPlayerGuardianCount(ssPlayer) > 0 || isVIP) {
+                Integer guardiansLeft = GuardianUtil.getPlayerGuardianCount(ssPlayer);
+                if (!player.isOp() && !player.hasPermission("signshop.guardians.vip"))
+                {
+                    guardiansLeft = GuardianUtil.incrementPlayerGuardianCounter(ssPlayer, -1);
+                }
                 String message;
                 Map<String, String> messageParts = new LinkedHashMap<String, String>();
                 messageParts.put("!guardians", guardiansLeft.toString());
-                if(guardiansLeft == 0)
+                
+                if (isVIP)
+                    message = "You are a VIP. Inventory restored.";
+                else if(guardiansLeft == 0)
                     message = SignShopConfig.getError("player_used_last_guardian", messageParts);
                 else
                     message = SignShopConfig.getError("player_has_guardians_left", messageParts);

@@ -86,6 +86,8 @@ public class SignShopGuardian extends JavaPlugin {
             CommandHandler.handleGuardianQuery(sender, args);
         else if(commandName.equalsIgnoreCase("addguardians"))
             return CommandHandler.handleAddGuardians(sender, args);
+        else if(commandName.equalsIgnoreCase("clearguardians"))
+            return CommandHandler.handleClearGuardians(sender, args);
 
         return true;
     }

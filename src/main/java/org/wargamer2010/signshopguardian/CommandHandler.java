@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.logging.Level;
+
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
@@ -124,6 +125,48 @@ public class CommandHandler {
             return false;
         }
 
+        return true;
+    }
+
+    public static boolean handleClearGuardians(CommandSender sender, String[] args)
+    {
+        if(sender instanceof Player) {
+            SignShopPlayer player = new SignShopPlayer((Player) sender);
+            if(!signshopUtil.hasOPForCommand(player))
+                return true;
+        }
+        
+        SignShopPlayer inspectPlayer;
+
+        if(args.length > 0) {
+            String playername = checkPlayer(args[0]);
+
+            if(playername == null) {
+                sendMessage(sender, "Player does not exist on this server");
+                return true;
+            }
+
+            inspectPlayer = PlayerIdentifier.getByName(playername);
+        } else {
+            if(!(sender instanceof Player)) {
+                sendMessage(sender, "Specify a player to use this command on the console");
+                return true;
+            }
+
+            inspectPlayer = new SignShopPlayer((Player)sender);
+        }
+
+        int count = GuardianUtil.getPlayerGuardianCount(inspectPlayer);
+
+        if(count > 0)
+        {
+            GuardianUtil.incrementPlayerGuardianCounter(inspectPlayer, (-1)*count);
+            sendMessage(sender, "Guardians have been cleared for " + inspectPlayer.getName());
+        }
+        else
+        {
+            sendMessage(sender, inspectPlayer.getName() + " has no guardians to clear");
+        }
         return true;
     }
 }

@@ -20,3 +20,10 @@ commands:
   addguardians:
     description: Gifts or removes the given amount of guardians
     usage: /addguardians [player] <amount>
+  clearguardians:
+    description: Clears/resets a players guardian count
+    usage: /clearguardians [player]
+permissions:
+  signshop.guardians.vip:
+    description: Always save inventory reguardless of guardian count.
+    default: op
